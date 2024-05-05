@@ -1,0 +1,6 @@
+/roadmap\ and\ notes/
+/ll_env/
+db.sqlite3
+/.vscode/
+
+/**/__pycache__/ # is this the correct syntax?

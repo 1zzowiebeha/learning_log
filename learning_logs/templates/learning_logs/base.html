@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>
+            {% block title %}Learning Log{% endblock title %}
+        </title>
+        {% load django_bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{% url 'learning_logs:index' %}">
+                        Learning Log
+                    </a>
+                    
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarCollapse" aria-controls="navbarCollapse"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'learning_logs:topics' %}">
+                                    Topics
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'stats:index' %}">
+                                    Statistics
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- end of links on left side of navbar -->
+                        
+                    <!-- Account-related links -->
+                        <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+                            {% if user.is_authenticated %}
+                                <li class="nav-item mt-1 me-2">
+                                    <span class="navbar-text me-2">
+                                        Hello, {{ user.username }}.
+                                    </span>
+                                </li>
+                                
+                                <li class="nav-item">
+                                    <form action="{% url 'accounts:logout' %}" method='post'>
+                                        {% csrf_token %}
+                                        <button name='submit' class='btn btn-outline-primary btn-sm'>
+                                            Log out
+                                        </button>
+                                    </form>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'accounts:register' %}">
+                                        Register
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'accounts:login' %}">
+                                        Log in
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul> <!-- End of account-related links -->
+                    </div> <!-- closes collapsible parts of navbar -->
+                    
+                </div> <!-- end of navbar container -->
+            </nav> <!-- end of navbar -->
+        </header>
+        
+        <main class="container">
+            <div class="pb-2 mb-2 border-bottom">
+                {% block page_header %}{% endblock page_header %}
+            </div>
+            <div>
+                {% block content %}{% endblock content %}
+            </div>
+        </main>
+        
+        <footer class="bottom-0 w-100 mt-5">
+            <nav class="navbar navbar-expand-md bg-dark">
+                <div class="pl-4 mx-auto">
+                    {% if debug %}
+                        <p class="fw-medium text-light">
+                            Debug
+                            <span class="badge bg-success">ON</span>
+                            -
+                            <a class="link-warning" href="{% url 'admin:index' %}">Admin Panel</a>
+                        </p>
+                    {% endif %}       
+                </div>
+            </nav>
+        </footer>
+    </body>
+</html>

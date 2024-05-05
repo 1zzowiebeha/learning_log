@@ -1,0 +1,27 @@
+{% extends 'learning_logs/base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block page_header %}
+    <h1>
+        a new entry about
+        <a class="text-decoration-none"
+           href="{% url 'learning_logs:topic' topic.id %}">
+           {{ topic.content }}
+        </a>
+    </h1>
+{% endblock page_header %}
+
+{% block content %}
+    <p>
+        <a class="text-decoration-none" href="{% url 'learning_logs:topic' topic.id %}">
+            ⬅ View {{ topic.content }} entries
+        </a>
+    </p>
+    <form action="{% url 'learning_logs:new_entry' topic.id %}" method="POST">
+        {% csrf_token %}
+        {% bootstrap_form form wrapper_class="w-50 mb-3" %}
+        <input class="btn btn-success" type="submit" value="Create Entry"/>
+    </form>
+{% endblock %}
+

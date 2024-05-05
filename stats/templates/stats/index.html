@@ -1,0 +1,49 @@
+{% extends 'learning_logs/base.html' %}
+
+{% block title %}Learning Logs{% endblock title %}
+
+{% block page_header %}
+    <h1>View statistics for your topics:</h1>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="
+        {% if topics_plot %} mb-2 {% else %} mb-5 {% endif %}
+        pt-2 text-secondary">
+        {% if topics_plot %}
+            {{ topics_plot|safe }} {# guarantee safety!! #}
+        {% else %}
+            <p>Plot unavailable. You have no topic hours to visualize yet.</p>
+        {% endif %}
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header bg-light font-weight-bold">
+            <h2>
+                Interact with your data.
+            </h2>
+        </div>
+        <div class="card-body">
+            <p>
+                Visualize the time you've put into each of your learning topics.
+            </p>   
+        </div>
+    </div>
+    
+    <h2 class="border-top pt-2 pb-2 border-bottom">
+        📊 Statistics dashboards:
+    </h2>
+    <ul>
+        {% for topic in topics %}
+            <p class="fs-4">
+                <a class="text-decoration-none" href="{% url 'stats:topic_data' topic.id %}">
+                    {{ topic.content }}
+                </a>
+            </p>
+        {% empty %}
+            <p>
+                No topics exist to visualize.
+            </p>
+        {% endfor %}
+    </ul>
+{% endblock content %}

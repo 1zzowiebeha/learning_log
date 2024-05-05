@@ -1,0 +1,15 @@
+{% extends 'learning_logs/base.html' %}
+
+{% block content %}
+    <h1>Edit hours datapoint for {{ topic.content }}:</h1>
+    <p>
+        <a href="{% url 'learning_logs:topic' topic.id %}">
+            ⬅ Back to topic '{{ topic.content|lower }}'
+        </a>
+    </p>
+    <form action="{% url 'learning_logs:edit_hours' datapoint.id %}" method="POST">
+        {% csrf_token %}
+        {{ hours_edit_form.as_div }}
+        <input type="submit" value="Save datapoint"/>
+    </form>
+{% endblock %}
