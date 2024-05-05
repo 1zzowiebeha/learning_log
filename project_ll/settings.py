@@ -101,13 +101,6 @@ WSGI_APPLICATION = 'project_ll.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -150,7 +143,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#####
+##### Auth
 
 # Used to redirect the user once they login.
 # Also used to redirect authenticated users who access
@@ -161,3 +154,43 @@ LOGIN_REDIRECT_URL = "learning_logs:index"
 LOGOUT_REDIRECT_URL = "learning_logs:index"
 # Used with @login_redirect
 LOGIN_URL = "accounts:login"
+
+##### Platform.sh
+
+# Platform.sh settings.
+
+# We normally place import statements at the beginning of a module, but
+#   in this case, it's helpful to keep all the
+#   remote-specific settings in one section.
+
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+            
+from platformshconfig import Config
+config = Config()
+
+if config.is_valid_platform():
+    ALLOWED_HOSTS.append('.platformsh.site')
+    
+    if config.appDir:
+        STATIC_ROOT = Path(config.appDir) / 'static'
+    if config.projectEntropy:
+        SECRET_KEY = config.projectEntropy
+    if not config.in_build():
+        db_settings = config.credentials('database')
+
+        DATABASES = {
+            'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': db_settings['path'],
+            'USER': db_settings['username'],
+            'PASSWORD': db_settings['password'],
+            'HOST': db_settings['host'],
+            'PORT': db_settings['port'],
+            },
+        }
