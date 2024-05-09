@@ -1,6 +1,7 @@
 # Notes, env, db, VSCode files, pycache
 /roadmap\ and\ notes/
 ll_env/
+linux_ll_env/
 *.sqlite3
 .vscode/
 

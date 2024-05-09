@@ -136,6 +136,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -155,43 +156,81 @@ LOGOUT_REDIRECT_URL = "learning_logs:index"
 # Used with @login_redirect
 LOGIN_URL = "accounts:login"
 
-##### Platform.sh
-
-# Platform.sh settings.
+##### Platform.sh settings
+#################################################################################
+#
 
 # We normally place import statements at the beginning of a module, but
 #   in this case, it's helpful to keep all the
 #   remote-specific settings in one section.
 
-if DEBUG:
+import os
+import json
+import base64
+import sys
+
+# Helper function for decoding base64-encoded JSON variables.
+def decode(variable):
+    """Decodes a Platform.sh environment variable.
+    Args:
+        variable (string):
+            Base64-encoded JSON (the content of an environment variable).
+    Returns:
+        An dict (if representing a JSON object), or a scalar type.
+    Raises:
+        JSON decoding error.
+    """
+    try:
+        if sys.version_info[1] > 5:
+            return json.loads(base64.b64decode(variable))
+        else:
+            return json.loads(base64.b64decode(variable).decode('utf-8'))
+    except json.decoder.JSONDecodeError:
+        print(f'Error decoding JSON, code %d', json.decoder.JSONDecodeError)
+
+import platformshconfig
+config = platformshconfig.Config()
+
+# This variable must always match the primary database relationship name,
+#   configured in .platform.app.yaml.
+PLATFORMSH_DB_RELATIONSHIP="database"
+
+# The following block is only applied within Platform.sh environments
+# That is, only when this Platform.sh variable is defined
+if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
+    ALLOWED_HOSTS.append('.platformsh.site')
+    DEBUG = False
+    
+    # Redefine the static root based on the project's directory on Platform.sh
+    if (os.getenv('PLATFORM_APP_DIR') is not None):
+        STATIC_ROOT = os.path.join(os.getenv('PLATFORM_APP_DIR'), 'static')
+    # PLATFORM_PROJECT_ENTROPY is unique to your project
+    # Use it to define define Django's SECRET_KEY
+    if (os.getenv('PLATFORM_PROJECT_ENTROPY') is not None):
+        SECRET_KEY = os.getenv('PLATFORM_PROJECT_ENTROPY')
+    # Database service configuration, post-build only,
+    #   as services aren't available during the build.
+    if (os.getenv('PLATFORM_ENVIRONMENT') is not None):
+        platformRelationships = decode(os.getenv('PLATFORM_RELATIONSHIPS'))
+        db_settings = platformRelationships[PLATFORMSH_DB_RELATIONSHIP][0]
+
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': db_settings['path'],
+                'USER': db_settings['username'],
+                'PASSWORD': db_settings['password'],
+                'HOST': db_settings['host'],
+                'PORT': db_settings['port'],
+            },
+        }
+# Not platform.sh
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-            
-from platformshconfig import Config
-config = Config()
 
-if config.is_valid_platform():
-    ALLOWED_HOSTS.append('.platformsh.site')
-    DEBUG = False
-    
-    if config.appDir:
-        STATIC_ROOT = Path(config.appDir) / 'static'
-    if config.projectEntropy:
-        SECRET_KEY = config.projectEntropy
-    if not config.in_build():
-        db_settings = config.credentials('database')
-
-        DATABASES = {
-            'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': db_settings['path'],
-            'USER': db_settings['username'],
-            'PASSWORD': db_settings['password'],
-            'HOST': db_settings['host'],
-            'PORT': db_settings['port'],
-            },
-        }
+    STATIC_ROOT = BASE_DIR / 'static'
