@@ -89,13 +89,16 @@
             <nav class="navbar navbar-expand-md bg-dark">
                 <div class="pl-4 mx-auto">
                     {% if debug %}
-                        <p class="fw-medium text-light">
+                        <p class="fw-medium text-light text-center">
                             Debug
                             <span class="badge bg-success">ON</span>
                             -
                             <a class="link-warning" href="{% url 'admin:index' %}">Admin Panel</a>
                         </p>
-                    {% endif %}       
+                    {% endif %}      
+                    <p class="fw-medium text-light">
+                        Copyright ©{% now "Y" %} Zowie Beha
+                    </p> 
                 </div>
             </nav>
         </footer>
