@@ -14,15 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
 
 urlpatterns = [
     # auth
     path('accounts/', include('accounts.urls')),
     
     # third party
-    path('admin/', admin.site.urls),
     path('tz_detect/', include('tz_detect.urls')),
     
     # my own links
@@ -30,3 +29,20 @@ urlpatterns = [
     path('', include('learning_logs.urls')),
     
 ]
+
+# Production mode & we want the admin site
+if settings.ENABLE_ADMIN_SITE_IN_PROD and not settings.DEBUG:
+    from django.contrib import admin
+    
+    urlpatterns.insert(
+        1,
+        path('ff2d48fa-ec0c-47b3-8667-70750386fcfd/', admin.site.urls)
+    )
+# Debug mode
+elif settings.DEBUG:
+    from django.contrib import admin
+    
+    urlpatterns.insert(
+        1,
+        path('ff2d48fa-ec0c-47b3-8667-70750386fcfd/', admin.site.urls)
+    )

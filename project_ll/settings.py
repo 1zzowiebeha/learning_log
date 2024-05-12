@@ -164,6 +164,8 @@ LOGIN_URL = "accounts:login"
 #   in this case, it's helpful to keep all the
 #   remote-specific settings in one section.
 
+ENABLE_ADMIN_SITE_IN_PROD = False
+
 import os
 import json
 import base64
@@ -263,6 +265,7 @@ else:
 # implement caching
 # cache sessions
 # tune the template cache
+# https://opensource.com/article/18/1/10-tips-making-django-admin-more-secure
 
 # set the following for your postgres user so that django doesn't set it for each request:
 # client_encoding: 'UTF8'
