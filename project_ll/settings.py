@@ -200,6 +200,9 @@ PLATFORMSH_DB_RELATIONSHIP="database"
 # The following block is only applied within Platform.sh environments
 # That is, only when this Platform.sh variable is defined
 if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
+    if ENABLE_ADMIN_SITE_IN_PROD:
+        INSTALLED_APPS.append('django.contrib.admin')
+        
     DEBUG = False
     # ensure cookie is sent only with an HTTPS connection
     CSRF_COOKIE_SECURE = True 
