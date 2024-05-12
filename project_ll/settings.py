@@ -198,8 +198,25 @@ PLATFORMSH_DB_RELATIONSHIP="database"
 # The following block is only applied within Platform.sh environments
 # That is, only when this Platform.sh variable is defined
 if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
+    # Disable the admin panel
+    INSTALLED_APPS.remove('django.contrib.admin')
+    
     ALLOWED_HOSTS.append('.platformsh.site')
     DEBUG = False
+    # ensure cookie is sent only with an HTTPS connection
+    CSRF_COOKIE_SECURE = True 
+    # ensure cookie is sent only with an HTTPS connection
+    # prevent packet sniffers from getting unencrypted session cookies & hijacking
+    #   a user's session
+    SESSION_COOKIE_SECURE = True
+    # redirect all non-https requests to https
+    SECURE_SSL_REDIRECT = True
+    
+    # read this before you touch these settings:
+    # https://hstspreload.org/
+    #SECURE_HSTS_SECONDS = 3600 # for preload eligibility, set to 31536000
+    #SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    #SECURE_HSTS_PRELOAD = True
     
     # Redefine the static root based on the project's directory on Platform.sh
     if (os.getenv('PLATFORM_APP_DIR') is not None):
@@ -234,3 +251,31 @@ else:
     }
 
     STATIC_ROOT = BASE_DIR / 'static'
+    
+    
+    
+# todo:
+# For maximum security, make sure database servers only accept connections from your application servers.
+# configure the web server that sits in front of Django to validate the host. It should respond with a static error page or ignore requests for incorrect hosts instead of forwarding the request to Django. This way you’ll avoid spurious errors in your Django logs (or emails if you have error reporting configured that way).
+# If you haven’t set up backups for your database, do it right now! (automatic backups)
+# In production, you must define a STATIC_ROOT directory where collectstatic will copy static files.
+# Media files are uploaded by your users. They’re untrusted! Make sure your web server never attempts to interpret them.
+# Make automatic backups for your media files.
+# implement caching
+# cache sessions
+# tune the template cache
+
+# set the following for your postgres user so that django doesn't set it for each request:
+# client_encoding: 'UTF8'
+# default_transaction_isolation: 'read committed'
+# timezone: America/Detroit (does pg store in UTC regardless? and convert to user timezone?)
+# what's a pg session?
+
+
+# CONN_MAX_AGE:
+#   The development server creates a new thread for each request it handles, negating the effect of persistent connections. Don’t enable this setting during development.
+
+# When Django establishes a connection to the database, it sets up appropriate parameters, depending on the backend being used. If you enable persistent connections, this setup is no longer repeated every request. If you modify parameters such as the connection’s isolation level or time zone, you should either restore Django’s defaults at the end of each request, force an appropriate value at the beginning of each request, or disable persistent connections.
+# If a connection is created in a long-running process, outside of Django’s request-response cycle, the connection will remain open until explicitly closed, or timeout occurs.
+
+

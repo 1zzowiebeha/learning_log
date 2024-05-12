@@ -1,5 +1,7 @@
 # Learning Log
 
+# note: environment is currently paused.
+
 Learning Log is a project based on the code written in
 Python Crash Course 3rd Ed. by Eric Matthes.
 
@@ -45,6 +47,13 @@ See OS specific command here: https://docs.platform.sh/administration/cli.html
 
 ### View your project:
     platform url
+    
+
+### Check that your production env is secure
+Step 1: ssh into machine
+Step 2: run `manage.py check --deploy`
+Step 3: add recommended settings to the platform.sh environment section
+        of the settings file
 
 ### Cleanup:
     platform <project>:delete
