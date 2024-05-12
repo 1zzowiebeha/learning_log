@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django_bootstrap5',
 
     # Default django apps
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -53,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -198,10 +198,6 @@ PLATFORMSH_DB_RELATIONSHIP="database"
 # The following block is only applied within Platform.sh environments
 # That is, only when this Platform.sh variable is defined
 if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
-    # Disable the admin panel
-    INSTALLED_APPS.remove('django.contrib.admin')
-    
-    ALLOWED_HOSTS.append('.platformsh.site')
     DEBUG = False
     # ensure cookie is sent only with an HTTPS connection
     CSRF_COOKIE_SECURE = True 
@@ -243,6 +239,9 @@ if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
         }
 # Not platform.sh
 else:
+    # Enable the admin panel:
+    INSTALLED_APPS.append('django.contrib.admin')
+    
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
