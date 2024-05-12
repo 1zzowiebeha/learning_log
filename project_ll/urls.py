@@ -34,15 +34,13 @@ urlpatterns = [
 if settings.ENABLE_ADMIN_SITE_IN_PROD and not settings.DEBUG:
     from django.contrib import admin
     
-    urlpatterns.insert(
-        1,
+    urlpatterns += [
         path('ff2d48fa-ec0c-47b3-8667-70750386fcfd/', admin.site.urls)
-    )
+    ]
 # Debug mode
 elif settings.DEBUG:
     from django.contrib import admin
     
-    urlpatterns.insert(
-        1,
+    urlpatterns += [
         path('ff2d48fa-ec0c-47b3-8667-70750386fcfd/', admin.site.urls)
-    )
+    ]
