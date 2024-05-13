@@ -5,7 +5,10 @@ linux_ll_env/
 *.sqlite3
 .vscode/
 
-__pycache__/ 
+__pycache__/
+
+# ignore root level static folder descendants, but keep the folder
+/static/*
 
 
 ###

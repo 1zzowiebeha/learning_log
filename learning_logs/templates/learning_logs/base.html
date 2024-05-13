@@ -10,12 +10,13 @@
         {% load django_bootstrap5 %}
         {% bootstrap_css %}
         {% bootstrap_javascript %}
+        {% load static %}
     </head>
     <body>
         <header>
             <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="{% url 'learning_logs:index' %}">
+                    <a class="navbar-brand ms-2" href="{% url 'learning_logs:index' %}">
                         Learning Log
                     </a>
                     
@@ -98,7 +99,10 @@
                     {% endif %}      
                     <p class="fw-medium text-light">
                         Copyright ©{% now "Y" %} Zowie Beha
-                    </p> 
+                    </p>
+                    <a href="{% url 'learning_logs:index' %}">
+                        <img class="rounded mx-auto d-block" height=58 width=80 src="{% static 'learning_logs/logo.png' %}">
+                    </a>
                 </div>
             </nav>
         </footer>

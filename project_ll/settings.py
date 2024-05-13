@@ -21,12 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ftqr10uckxsw+xx2#$i1wd5q%19u3+mm*p+pwhy40$ttr+&2ui'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = []
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -242,8 +236,16 @@ if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
                 'PORT': db_settings['port'],
             },
         }
+        
 # Not platform.sh
 else:
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = 'django-insecure-ftqr10uckxsw+xx2#$i1wd5q%19u3+mm*p+pwhy40$ttr+&2ui'
+
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
+    ALLOWED_HOSTS.append('127.0.0.1')
+    
     # Enable the admin panel:
     INSTALLED_APPS.append('django.contrib.admin')
     

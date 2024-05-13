@@ -16,12 +16,14 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # auth
     path('accounts/', include('accounts.urls')),
     
     # third party
+    #path('admin/', admin.site.urls) if settings.DEBUG else path('admin/', lambda r: HttpResponseForbidden()),
     path('tz_detect/', include('tz_detect.urls')),
     
     # my own links
@@ -30,17 +32,17 @@ urlpatterns = [
     
 ]
 
-# Production mode & we want the admin site
+# Production mode- Add route for admin site if enabled for prod
 if settings.ENABLE_ADMIN_SITE_IN_PROD and not settings.DEBUG:
     from django.contrib import admin
     
     urlpatterns += [
         path('ff2d48fa-ec0c-47b3-8667-70750386fcfd/', admin.site.urls)
     ]
-# Debug mode
+# Debug mode- Add route for admin site in debug mode
 elif settings.DEBUG:
     from django.contrib import admin
     
     urlpatterns += [
-        path('ff2d48fa-ec0c-47b3-8667-70750386fcfd/', admin.site.urls)
+        path('ff2d48fa-ec0c-47b3-8667-70750386fcfd/', admin.site.urls),
     ]
