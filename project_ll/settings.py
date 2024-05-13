@@ -65,7 +65,7 @@ ROOT_URLCONF = 'project_ll.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -243,7 +243,7 @@ else:
     SECRET_KEY = 'django-insecure-ftqr10uckxsw+xx2#$i1wd5q%19u3+mm*p+pwhy40$ttr+&2ui'
 
     # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = True
+    DEBUG = False
     ALLOWED_HOSTS.append('127.0.0.1')
     
     # Enable the admin panel:
