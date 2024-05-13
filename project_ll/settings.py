@@ -21,7 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+]
 INTERNAL_IPS = ["127.0.0.1"]
 
 
@@ -194,6 +197,8 @@ PLATFORMSH_DB_RELATIONSHIP="database"
 # The following block is only applied within Platform.sh environments
 # That is, only when this Platform.sh variable is defined
 if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
+    ALLOWED_HOSTS.append('.platformsh.site')
+    
     if ENABLE_ADMIN_SITE_IN_PROD:
         INSTALLED_APPS.append('django.contrib.admin')
         
@@ -244,7 +249,6 @@ else:
 
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = False
-    ALLOWED_HOSTS.append('127.0.0.1')
     
     # Enable the admin panel:
     INSTALLED_APPS.append('django.contrib.admin')
