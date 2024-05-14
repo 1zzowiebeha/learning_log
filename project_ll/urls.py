@@ -16,31 +16,28 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.conf import settings
-from django.conf.urls.static import static
 
 urlpatterns = [
-    # auth
+    # Auth:
     path('accounts/', include('accounts.urls')),
     
-    # third party
-    #path('admin/', admin.site.urls) if settings.DEBUG else path('admin/', lambda r: HttpResponseForbidden()),
+    # Third-party:
     path('tz_detect/', include('tz_detect.urls')),
     
-    # my own links
+    # Custom apps:
     path('statistics/', include('stats.urls')),
     path('', include('learning_logs.urls')),
-    
 ]
 
-# Production mode- Add route for admin site if enabled for prod
 if settings.ENABLE_ADMIN_SITE_IN_PROD and not settings.DEBUG:
+    # Production mode: Add route for admin site if enabled for production.
     from django.contrib import admin
     
     urlpatterns += [
         path('ff2d48fa-ec0c-47b3-8667-70750386fcfd/', admin.site.urls)
     ]
-# Debug mode- Add route for admin site in debug mode
 elif settings.DEBUG:
+    # Debug mode: Add route for admin site in debug mode.
     from django.contrib import admin
     
     urlpatterns += [

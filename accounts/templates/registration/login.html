@@ -1,4 +1,5 @@
 {% extends 'learning_logs/base.html' %}
+
 {% load django_bootstrap5 %}
 
 {% block page_header %}
@@ -6,6 +7,8 @@
 {% endblock page_header %}
 
 {% block content %}
+    {# Error display is handled by bootstrap_form #}
+    
     <form class="mb-3" action="{% url 'accounts:login' %}" method='post'>
         {% csrf_token %}
         {% bootstrap_form form %}

@@ -2,12 +2,14 @@ from django.contrib import admin
 
 from .models import Topic, Entry
 
-# Register your models here.
 
 class EntryAdmin(admin.ModelAdmin):
+    """Define Entry's ModelAdmin settings for
+    the admin site."""
     def sortable_str(self, obj):
         """Allows us to click the table column heading
         in the admin menu to sort by Entry.__str__().
+        
         We display this function in the item table via list_display."""
         return obj.__str__()
 

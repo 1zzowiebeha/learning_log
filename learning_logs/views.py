@@ -1,17 +1,17 @@
+"""Defines views for the learning_logs app."""
+
 from django.http import HttpRequest, HttpResponse, Http404
 from django.core.exceptions import BadRequest
-from django.template import loader
-from django.shortcuts import render, get_object_or_404, redirect, get_list_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Model, F
+from django.db.models import Model
 
 from stats.helperutils import max_hours_reached, get_total_hours, max_length
 
 from .models import Topic, Entry, TopicHourData
 from .forms import TopicForm, EntryForm, TopicHoursDataForm
 
-# Create your views here.
 
 def check_owner(user: User, model: Model,
                 owner_field: str = "owner"):
@@ -21,31 +21,31 @@ def check_owner(user: User, model: Model,
     owner_field is the User ForeignKey
     field on your model."""
 
-    # test this in the shell
+    # TODO: Test this in the shell
     owner = getattr(model, owner_field)
     if user != owner:
         raise Http404
+
 
 def index(request: HttpRequest):
     """The homepage for learning_logs."""
     return render(request, 'learning_logs/index.html')
 
-    template = loader.get_template('learning_logs/index.html')
-    return HttpResponse(template.render({}, request))
-
 
 @login_required
 def topics(request: HttpRequest):
     """Show all topics."""
-    #topics = Topic.objects.order_by("created_on")
     topics = Topic.objects.filter(owner=request.user) \
                           .order_by("created_on")
     context = {
         'topics': topics
     }
+    
     return render(request, 'learning_logs/topics.html', context)
 
-# class-based views might make this less repetative (due to inheritance)
+
+# TODO: class-based views might make these views more DRY (via inheritance),
+#   since we repeat the same context/queries for multiple views.
 @login_required
 def topic(request: HttpRequest, topic_id: int):
     """Show a single topic and all its entries."""
@@ -56,7 +56,9 @@ def topic(request: HttpRequest, topic_id: int):
     check_owner(request.user, topic)
     
     entries = topic.entry_set.order_by('-created_on')
-    hours_form = TopicHoursDataForm(instance=topic, request=request, initial={'hours': 0})
+    hours_form = TopicHoursDataForm(instance=topic,
+                                    request=request,
+                                    initial={'hours': 0})
 
     context = {
         "topic": topic,
@@ -72,7 +74,6 @@ def topic(request: HttpRequest, topic_id: int):
 @login_required
 def new_topic(request: HttpRequest) -> HttpResponse:
     """Add a new topic."""
-
     if request.method == "POST":
         # POST data submitted; process data
         form = TopicForm(data=request.POST)
@@ -81,7 +82,6 @@ def new_topic(request: HttpRequest) -> HttpResponse:
             topic.owner = request.user
             topic.save()
 
-            # return HttpResponse(reverse('learning_logs:topics'))
             return redirect('learning_logs:topics')
     else:
         # No data submitted; create a blank form.
@@ -92,6 +92,7 @@ def new_topic(request: HttpRequest) -> HttpResponse:
         'form': form,
     }
     return render(request, 'learning_logs/new_topic.html', context)
+
 
 @login_required
 def edit_topic(request: HttpRequest, topic_id: int) -> HttpResponse:
@@ -116,6 +117,7 @@ def edit_topic(request: HttpRequest, topic_id: int) -> HttpResponse:
     
     return render(request, 'learning_logs/edit_topic.html', context)
 
+
 @login_required
 def delete_topic(request: HttpRequest, topic_id: int) -> HttpResponse:
     """Delete the given topic."""
@@ -129,6 +131,7 @@ def delete_topic(request: HttpRequest, topic_id: int) -> HttpResponse:
         return redirect('learning_logs:topics')
     else:
         raise BadRequest
+
 
 @login_required
 def new_entry(request: HttpRequest, topic_id: int) -> HttpResponse:
@@ -144,7 +147,7 @@ def new_entry(request: HttpRequest, topic_id: int) -> HttpResponse:
             new_entry = form.save(commit=False)
             new_entry.topic = topic
             new_entry.save()
-            # return HttpReponseRedirect(reverse('learning_logs:topic'), args=[topic_id])
+            
             return redirect("learning_logs:topic", topic_id=topic_id)
     else:
         form = EntryForm()
@@ -156,6 +159,7 @@ def new_entry(request: HttpRequest, topic_id: int) -> HttpResponse:
     
     # Display a blank or invalid form.
     return render(request, 'learning_logs/new_entry.html', context)
+
 
 @login_required
 def edit_entry(request: HttpRequest, entry_id: int) -> HttpRequest:
@@ -184,6 +188,7 @@ def edit_entry(request: HttpRequest, entry_id: int) -> HttpRequest:
     # Display a blank or invalid form
     return render(request, 'learning_logs/edit_entry.html', context)
 
+
 @login_required
 def delete_entry(request: HttpRequest, entry_id: int) -> HttpRequest:
     """Delete the given entry."""
@@ -199,8 +204,12 @@ def delete_entry(request: HttpRequest, entry_id: int) -> HttpRequest:
     else:
         raise BadRequest
 
+
 @login_required
 def edit_hours(request: HttpRequest, datapoint_id: int) -> HttpRequest:
+    """Edit the given hour datapoint."""
+    # Note: Repetition should be improved with CBVs.
+    
     datapoint = get_object_or_404(TopicHourData, id=datapoint_id)
     topic = datapoint.topic
     
@@ -228,10 +237,13 @@ def edit_hours(request: HttpRequest, datapoint_id: int) -> HttpRequest:
     
     return render(request, 'learning_logs/edit_hours.html', context)    
     
+    
 @login_required
 def add_hours(request: HttpRequest, topic_id: int) -> HttpRequest:
-    # repetitive code is present here from the learning_logs:topic
-    # .. view. but I'm not sure how to make this DRY.
+    """Add a new datapoint for hours spent on a topic."""
+    # Note: repetitive code is present here from the learning_logs:topic
+    #   view. Class based views might make this more DRY.
+
     topic = get_object_or_404(Topic, id=topic_id)
     
     check_owner(request.user, topic)

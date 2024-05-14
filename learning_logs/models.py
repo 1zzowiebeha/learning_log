@@ -1,12 +1,11 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-from django.core.validators import (
-    MinValueValidator, MaxValueValidator
-)
 
 
 class CommonInfo(models.Model):
+    """Date fields that can be included via subclassing
+    CommonInfo."""
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
     
@@ -23,6 +22,7 @@ class Topic(CommonInfo):
         """Return a string that represents the topic."""
         return self.content
 
+
 class TopicHourData(models.Model):
     topic = models.ForeignKey(to=Topic, on_delete=models.CASCADE)
     hours = models.DecimalField(
@@ -32,10 +32,7 @@ class TopicHourData(models.Model):
         default=0,
         max_length=100_000,
     )
-        # validators=[
-        #      MinValueValidator(0),
-        # ]
-    
+
     created_on = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
@@ -43,12 +40,7 @@ class TopicHourData(models.Model):
     
     class Meta:
         ordering = ["topic", "hours"]
-        # constraints = [
-        #     models.CheckConstraint(
-        #         check=models.Q(hours__gte=0),
-        #         name="hours_within_range"
-        #     ),
-        # ]
+        
         
 class Entry(CommonInfo):
     """An entry for a topic."""

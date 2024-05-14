@@ -13,12 +13,12 @@
             </p>
             {% if user.is_authenticated %}
                 <a class="btn btn-outline-primary btn-lg mt-1"
-                href="{% url 'learning_logs:topics' %}">
+                   href="{% url 'learning_logs:topics' %}">
                     View your Topics &raquo;
                 </a>
             {% else %}
                 <a class="btn btn-primary btn-lg mt-1"
-                href="{% url 'accounts:register' %}">
+                   href="{% url 'accounts:register' %}">
                     Register &raquo;
                 </a>
             {% endif %}

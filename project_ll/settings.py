@@ -17,21 +17,17 @@ import django
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
 ]
+
 INTERNAL_IPS = ["127.0.0.1"]
 
 
 # Application definition
-
 INSTALLED_APPS = [
-    # My apps (put it first so you can override default behaviors if desired)
+    # My apps (placed first so we can override default behaviors if desired)
     'learning_logs.apps.LearningLogsConfig',
     'stats.apps.StatsConfig',
     'accounts.apps.AccountsConfig',
@@ -83,24 +79,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project_ll.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'crashcourse_app',
-#         'USER': 'django_crashcourse',
-#         'PASSWORD': '2VvCXVGAj1ZqNNSfJSI7', # make an env var in production
-#         "HOST": '127.0.0.1',
-#         "PORT": '5433', # pg16
-#     }
-# }
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -119,7 +99,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'America/Detroit'
@@ -131,37 +110,35 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
 STATIC_URL = 'static/'
 MEDIA_URL = 'media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-##### Auth
+########
+# Auth #
+########
 
 # Used to redirect the user once they login.
 # Also used to redirect authenticated users who access
-# .. the login page, if a "next" GET or POST query param
-# .. is not provided.
+#   the login page, if a "next" GET or POST value
+#   is not provided.
 LOGIN_REDIRECT_URL = "learning_logs:index"
 # Used to redirect the user once they logout
 LOGOUT_REDIRECT_URL = "learning_logs:index"
-# Used with @login_redirect
+# Used to redirect the user when authentication fails (@login_required)
 LOGIN_URL = "accounts:login"
 
-##### Platform.sh settings
-#################################################################################
-#
+########################
+# Platform.sh settings #
+########################
 
 # We normally place import statements at the beginning of a module, but
 #   in this case, it's helpful to keep all the
 #   remote-specific settings in one section.
-
-ENABLE_ADMIN_SITE_IN_PROD = False
 
 import os
 import json
@@ -187,15 +164,18 @@ def decode(variable):
     except json.decoder.JSONDecodeError:
         print(f'Error decoding JSON, code %d', json.decoder.JSONDecodeError)
 
-import platformshconfig
-config = platformshconfig.Config()
+
+ENABLE_ADMIN_SITE_IN_PROD = False
 
 # This variable must always match the primary database relationship name,
 #   configured in .platform.app.yaml.
 PLATFORMSH_DB_RELATIONSHIP="database"
 
+# import platformshconfig
+# config = platformshconfig.Config()
+
 # The following block is only applied within Platform.sh environments
-# That is, only when this Platform.sh variable is defined
+# That is, only when this Platform.sh variable is defined.
 if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
     ALLOWED_HOSTS.append('.platformsh.site')
     
@@ -203,16 +183,17 @@ if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
         INSTALLED_APPS.append('django.contrib.admin')
         
     DEBUG = False
-    # ensure cookie is sent only with an HTTPS connection
+    
+    # Ensure cookie is sent only with an HTTPS connection.
     CSRF_COOKIE_SECURE = True 
-    # ensure cookie is sent only with an HTTPS connection
-    # prevent packet sniffers from getting unencrypted session cookies & hijacking
-    #   a user's session
+    # Ensure cookie is sent only with an HTTPS connection.
+    # Prevenst packet sniffers from getting unencrypted session cookies & hijacking
+    #   a user's session.
     SESSION_COOKIE_SECURE = True
-    # redirect all non-https requests to https
+    # Redirect all non-https requests to https.
     SECURE_SSL_REDIRECT = True
     
-    # read this before you touch these settings:
+    # WARNING: read this before you uncomment these settings:
     # https://hstspreload.org/
     #SECURE_HSTS_SECONDS = 3600 # for preload eligibility, set to 31536000
     #SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -221,11 +202,13 @@ if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
     # Redefine the static root based on the project's directory on Platform.sh
     if (os.getenv('PLATFORM_APP_DIR') is not None):
         STATIC_ROOT = os.path.join(os.getenv('PLATFORM_APP_DIR'), 'static')
+        
     # PLATFORM_PROJECT_ENTROPY is unique to your project
     # Use it to define define Django's SECRET_KEY
     if (os.getenv('PLATFORM_PROJECT_ENTROPY') is not None):
         SECRET_KEY = os.getenv('PLATFORM_PROJECT_ENTROPY')
-    # Database service configuration, post-build only,
+        
+    # Database service configuration: post-build only,
     #   as services aren't available during the build.
     if (os.getenv('PLATFORM_ENVIRONMENT') is not None):
         platformRelationships = decode(os.getenv('PLATFORM_RELATIONSHIPS'))
@@ -242,13 +225,13 @@ if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
             },
         }
         
-# Not platform.sh
+# Not a platform.sh environment (treat it as a development env):
 else:
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = 'django-insecure-ftqr10uckxsw+xx2#$i1wd5q%19u3+mm*p+pwhy40$ttr+&2ui'
 
     # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = False
+    DEBUG = True
     
     # Enable the admin panel:
     INSTALLED_APPS.append('django.contrib.admin')
@@ -261,32 +244,3 @@ else:
     }
 
     STATIC_ROOT = BASE_DIR / 'static'
-    
-    
-    
-# todo:
-# For maximum security, make sure database servers only accept connections from your application servers.
-# configure the web server that sits in front of Django to validate the host. It should respond with a static error page or ignore requests for incorrect hosts instead of forwarding the request to Django. This way you’ll avoid spurious errors in your Django logs (or emails if you have error reporting configured that way).
-# If you haven’t set up backups for your database, do it right now! (automatic backups)
-# In production, you must define a STATIC_ROOT directory where collectstatic will copy static files.
-# Media files are uploaded by your users. They’re untrusted! Make sure your web server never attempts to interpret them.
-# Make automatic backups for your media files.
-# implement caching
-# cache sessions
-# tune the template cache
-# https://opensource.com/article/18/1/10-tips-making-django-admin-more-secure
-
-# set the following for your postgres user so that django doesn't set it for each request:
-# client_encoding: 'UTF8'
-# default_transaction_isolation: 'read committed'
-# timezone: America/Detroit (does pg store in UTC regardless? and convert to user timezone?)
-# what's a pg session?
-
-
-# CONN_MAX_AGE:
-#   The development server creates a new thread for each request it handles, negating the effect of persistent connections. Don’t enable this setting during development.
-
-# When Django establishes a connection to the database, it sets up appropriate parameters, depending on the backend being used. If you enable persistent connections, this setup is no longer repeated every request. If you modify parameters such as the connection’s isolation level or time zone, you should either restore Django’s defaults at the end of each request, force an appropriate value at the beginning of each request, or disable persistent connections.
-# If a connection is created in a long-running process, outside of Django’s request-response cycle, the connection will remain open until explicitly closed, or timeout occurs.
-
-

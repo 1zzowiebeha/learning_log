@@ -6,7 +6,10 @@ from . import views
 
 app_name = "learning_logs"
 urlpatterns = [
+    # Index page.
     path('', views.index, name="index"),
+    
+    
     # List page that shows all topics.
     path('topics/', views.topics, name="topics"),
     # Detail page for a single topic.
@@ -19,11 +22,11 @@ urlpatterns = [
     path('delete_topic/<int:topic_id>/', views.delete_topic, name="delete_topic"),
     
     
-    
     # Page for adding a new topic hour data point.
     path('add_hours/<int:topic_id>/', views.add_hours, name="add_hours"),
     # Page for editing a topic hour data point.
     path('edit_hours/<int:datapoint_id>/', views.edit_hours, name="edit_hours"),
+    
     
     # Page for adding a new entry.
     path('new_entry/<int:topic_id>/', views.new_entry, name="new_entry"),

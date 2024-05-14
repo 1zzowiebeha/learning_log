@@ -16,10 +16,9 @@
                 </p>
                 
                 <div class="input-group ms-1">
-                    
                     <p>
                         <a class="text-decoration-none me-2 btn btn-light text-primary border rounded"
-                        href="{% url 'learning_logs:edit_topic' topic.id %}">
+                           href="{% url 'learning_logs:edit_topic' topic.id %}">
                             Edit
                         </a>
                     </p>
@@ -41,12 +40,11 @@
             </li>
         {% endfor %}
     </ul>
-    
 
-<p>
-    <a class="btn btn-success"
-        href="{% url 'learning_logs:new_topic' %}">
-        Create a new topic
-    </a>
-</p> 
+    <p>
+        <a class="btn btn-success"
+           href="{% url 'learning_logs:new_topic' %}">
+            Create a new topic
+        </a>
+    </p> 
 {% endblock content %}
