@@ -39,13 +39,6 @@ class TopicHoursDataForm(forms.ModelForm):
     This isn't a ModelForm, since we aren't setting the number of hours.
     Rather, we add and subtract hours in the view."""
     
-    def __init__(self, request: HttpRequest, *args, **kwargs):
-        if not request:
-            raise ValueError("request must not be None")
-        
-        self.request = request
-        super().__init__(*args, **kwargs)
-    
     class Meta:
         model = TopicHourData
         fields = ["hours", "created_on"]

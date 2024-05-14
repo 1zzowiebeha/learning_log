@@ -57,7 +57,6 @@ def topic(request: HttpRequest, topic_id: int):
     
     entries = topic.entry_set.order_by('-created_on')
     hours_form = TopicHoursDataForm(instance=topic,
-                                    request=request,
                                     initial={'hours': 0})
 
     context = {
@@ -217,15 +216,13 @@ def edit_hours(request: HttpRequest, datapoint_id: int) -> HttpRequest:
     
     if request.method == "POST":
         form = TopicHoursDataForm(instance=datapoint,
-                                  data=request.POST,
-                                  request=request)
+                                  data=request.POST)
         if form.is_valid():
             form.save()
             
             return redirect('learning_logs:topic', topic_id=topic.id)
     else:
-        form = TopicHoursDataForm(instance=datapoint,
-                                  request=request)
+        form = TopicHoursDataForm(instance=datapoint)
         
     context = {
         "topic": topic,
@@ -251,82 +248,59 @@ def add_hours(request: HttpRequest, topic_id: int) -> HttpRequest:
     entries = topic.entry_set.order_by('-created_on')
 
     if request.method == "POST":
-        form = TopicHoursDataForm(data=request.POST,
-                                  request=request)
+        form = TopicHoursDataForm(data=request.POST)
         if form.is_valid():
-            # note: this also searches POST.values(), but it is faster.
-            # .. if the user is altering POST values, then that's at their
-            # .. discretion.
-            # data_entered = form.cleaned_data["hours"]
-            # if "add" in request.POST:
-            #     clamped_hours = max(0, min(topic.hours + data_entered, max_length))
-            #     print(clamped_hours, topic.hours)
-            # elif "subtract" in request.POST:
-            #     clamped_hours = max(0, min(topic.hours - data_entered, max_length))
-            # else:
-            #     raise BadRequest
-            
-            # form.cleaned_data["hours"] = clamped_hours
             datapoint = form.save(commit=False)
             data_entered = datapoint.hours
-            # i guess we could pass this value to the form.
-            # maybe do a future refactor for this?
-            # but this is so loosely coupled...
+            
             total_hours = get_total_hours(topic)
             
             
             if "add" in request.POST:
-                # user entered value that will bring
-                # .. total aggregated hours over field's max_length
+                # User entered value that will bring
+                #   total aggregated hours over field's max_length:
                 if (total_hours + data_entered) > max_length:
                     hours_to_reach_max_length = max_length - total_hours
                     datapoint.hours = hours_to_reach_max_length
-                # user entered a negative number
+                # User entered a negative number:
                 elif data_entered < 0:
-                    # user entered a negative value that will bring us below 0
+                    # User entered a negative value that will bring us below 0:
                     if (total_hours + data_entered) < 0:
-                        # get negative total hours
+                        # Get negative total hours:
                         hours_to_reach_0 = total_hours * -1
                         datapoint.hours = hours_to_reach_0
                 else:
                     datapoint.hours = data_entered
-                    
-                # this is only for total hours:
-                # .. we need to tailor this to the datapoint, as above.
-                #clamped_hours = max(0, min(total_hours + data_entered, max_length))
-            
             elif "subtract" in request.POST:
-                # user entered value that will bring total aggregated hours below 0
+                # User entered value that will bring total aggregated hours below 0:
                 if (total_hours - data_entered) < 0:
-                    # get negative total hours
+                    # Get negative total hours:
                     hours_to_reach_0 = total_hours * -1
                     datapoint.hours = hours_to_reach_0
-                # user entered a negative number (double negative)
+                # User entered a negative number (double negative)
                 elif data_entered < 0:
-                    # addition would bring us over max_length
+                    # Addition would bring us over max_length:
                     if (total_hours - data_entered) > max_length:
                         hours_to_reach_max_length = max_length - total_hours
                         datapoint.hours = hours_to_reach_max_length
-                    # addition (negative * negative) is fine
+                    # Addition (negative * negative) is fine:
                     else:
                         datapoint.hours = (data_entered * -1)
-                # user entered a valid positive number to subtract
+                # User entered a valid positive number to subtract:
                 else:
-                    # turn positive number to subtract into a negative for the db
+                    # Turn the positive number to subtract
+                    #   into a negative for the db
                     datapoint.hours = (data_entered * -1)
-            
-                #clamped_hours = max(0, min(total_hours - data_entered, max_length))
+            # No 'add', 'subtract' found in POST data
             else:
                 raise BadRequest
-        
-
             
             datapoint.topic = topic
             datapoint.save()
             
             return redirect('learning_logs:topic', topic_id=topic_id)
     else:
-        form = TopicHoursDataForm(request=request)
+        form = TopicHoursDataForm()
         
     context = {
         "topic": topic,
