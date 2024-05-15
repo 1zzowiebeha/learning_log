@@ -71,5 +71,24 @@ https://docs.platform.sh/guides/django.html
 
 The Platform.sh CLI uses curl. If you use a VPN, curl will timeout unless you
 fiddle with http_proxy.
+
+If you choose to just disable your VPN, it may take some time for the command to work again.
+
 https://stackoverflow.com/questions/45410336/http-requests-working-in-browser-postman-timeout-when-using-curl-or-python-clie
+
 https://www.golinuxcloud.com/set-up-proxy-http-proxy-environment-variable/
+
+## Can't push code to a personal Github repo (Auth Error)?
+
+Support for password authentication was removed on August 13, 2021.
+
+Install the Github CLI for an easy and secure way to access Github:
+https://docs.github.com/en/github-cli/github-cli/about-github-cli
+
+Once installed, run the following:
+
+    gh auth login
+    
+    gh auth setup-git
+    
+Now you can push to a new repo, or push to a forked repo.
