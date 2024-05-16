@@ -51,6 +51,7 @@ See OS specific installation processes here: https://docs.platform.sh/administra
 
 ### Pause or resume live server:
     platform environment:pause [-p|--project PROJECT] [-e|--environment ENVIRONMENT]
+    
     platform environment:resume [-p|--project PROJECT] [-e|--environment ENVIRONMENT]
 
 ### Check that your production env is secure
