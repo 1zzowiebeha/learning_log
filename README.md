@@ -104,3 +104,5 @@ https://plotly.com/python/
 
 It also includes a logo that utilizes the Oxygen Mono font, which is licensed
 under the Open Font License. 
+
+The requirements.txt file contains a list of all third-party libraries used.
