@@ -14,10 +14,14 @@ web:
         "/":
             passthru: true
         "/static":
-            root: "static"
+            root: "content/static"
             expires: 1h
             allow: true
-
+        "/media":
+            root: "content/user_media"
+            expires: 1h
+            allow: true
+            
 # The size of the persistent disk of the application (in MB).
 disk: 512
 

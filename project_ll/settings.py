@@ -201,7 +201,8 @@ if (os.getenv('PLATFORM_APPLICATION_NAME') is not None):
     
     # Redefine the static root based on the project's directory on Platform.sh
     if (os.getenv('PLATFORM_APP_DIR') is not None):
-        STATIC_ROOT = os.path.join(os.getenv('PLATFORM_APP_DIR'), 'static')
+        STATIC_ROOT = os.path.join(os.getenv('PLATFORM_APP_DIR'), 'content/static')
+        MEDIA_ROOT = os.path.join(os.getenv('PLATFORM_APP_DIR'), 'content/user_media')
         
     # PLATFORM_PROJECT_ENTROPY is unique to your project
     # Use it to define define Django's SECRET_KEY
@@ -243,4 +244,5 @@ else:
         }
     }
 
-    STATIC_ROOT = BASE_DIR / 'static'
+    STATIC_ROOT = BASE_DIR / 'content/static'
+    MEDIA_ROOT = BASE_DIR / 'content/user_media'
