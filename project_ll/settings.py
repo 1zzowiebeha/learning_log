@@ -231,7 +231,7 @@ else:
     SECRET_KEY = 'django-insecure-ftqr10uckxsw+xx2#$i1wd5q%19u3+mm*p+pwhy40$ttr+&2ui'
 
     # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = False
+    DEBUG = True
     
     # Enable the admin panel:
     INSTALLED_APPS.append('django.contrib.admin')
