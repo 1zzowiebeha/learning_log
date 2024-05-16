@@ -44,14 +44,14 @@ See OS specific installation processes here: https://docs.platform.sh/administra
     platform create
 
 ### Push the project to the cloud:
-    platform push
+    platform push [--target TARGET] [-u|--set-upstream] [-p|--project PROJECT] [-e|--environment ENVIRONMENT]
 
 ### View your live project url:
-    platform url
+    platform url [-p|--project PROJECT] [-e|--environment ENVIRONMENT]
 
 ### Pause or resume live server:
-    platform environment:pause
-    platform environment:resume
+    platform environment:pause [-p|--project PROJECT] [-e|--environment ENVIRONMENT]
+    platform environment:resume [-p|--project PROJECT] [-e|--environment ENVIRONMENT]
 
 ### Check that your production env is secure
     platform environment:ssh [-p|--project PROJECT] [-e|--environment ENVIRONMENT]
