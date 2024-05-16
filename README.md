@@ -11,7 +11,7 @@ more CRUD features, and various UI changes.
 
 # Upcoming features:
 
-View a list of upcoming features [here](https://github.com/1zzowiebeha/learning_log/blob/main/roadmap.md): 
+View a list of upcoming features [here](https://github.com/1zzowiebeha/learning_log/blob/main/roadmap.md)
 
 
 # Deploy to platform.sh:
