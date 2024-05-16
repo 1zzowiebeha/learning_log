@@ -7,9 +7,8 @@ It includes an additional statistics module,
 a way to track hours spent with learning topics,
 more CRUD features, and various UI changes.
 
---
-### (insert gifs here that demonstrate functionality)
---
+Demo:
+<video width="630" height="300" src="https://github.com/1zzowiebeha/learning_log/assets/113861530/9ff64fe6-7dd7-4444-9383-af3c5b45d311"></video>
 
 # Deploy to platform.sh:
 
