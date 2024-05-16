@@ -7,6 +7,7 @@ Implement topic-specific statistic pages
 Download plotly.js and serve the file from the server.
   
   - Rewrite the graphs to be in JS, and to take data from the server
+
     https://adamj.eu/tech/2022/10/06/how-to-safely-pass-data-to-javascript-in-a-django-template/
     
   - Alternatively, use JQuery and grab the data from a backend API.
