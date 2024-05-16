@@ -3,12 +3,23 @@
 Fully implement custom relative date filter based off of humanize's implementation.
 Implement topic-specific statistic pages
 
+# Performance/Security:
+Download plotly.js and serve the file from the server.
+  Rewrite the graphs to be in JS, and to take data from the server
+    https://adamj.eu/tech/2022/10/06/how-to-safely-pass-data-to-javascript-in-a-django-template/
+    
+  Alternatively, use JQuery and grab the data from a backend API.
+    Probably the better approach.
+Download bootstrap css/js bundles and serve the files from the server.
+
 # Auth
 Allow for case insensitive logins
 If login credentials are incorrect, don't forget the "next" GET query
 Implement password change
 Implement user accounts, profile picture media
 Implement profiles
+
+Only allow internally-served JS to load.
 
 # Testing
 Increase testing coverage

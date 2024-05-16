@@ -1,7 +1,5 @@
 # Learning Log
 
-# note: environment is currently paused.
-
 Learning Log is a project based on the code written for
 Python Crash Course 3rd Ed. by Eric Matthes.
 
@@ -47,7 +45,10 @@ See OS specific installation processes here: https://docs.platform.sh/administra
 
 ### View your live project url:
     platform url
-    
+
+### Pause or resume live server:
+    platform environment:pause
+    platform environment:resume
 
 ### Check that your production env is secure
     platform environment:ssh [-p|--project PROJECT] [-e|--environment ENVIRONMENT]
@@ -57,6 +58,7 @@ See OS specific installation processes here: https://docs.platform.sh/administra
 3. add recommended settings to your settings file
 
 **Note**: From this ssh connection, you can also create a superuser for the admin site if you have enabled the `ENABLE_ADMIN_SITE_IN_PROD` setting.
+
 
 ### Cleanup:
     platform project:delete [-p|--project PROJECT]
@@ -74,11 +76,14 @@ fiddle with http_proxy.
 
 If you choose to just disable your VPN, it may take some time for the command to work again.
 
+Info on http_proxy:
+
 https://stackoverflow.com/questions/45410336/http-requests-working-in-browser-postman-timeout-when-using-curl-or-python-clie
 
 https://www.golinuxcloud.com/set-up-proxy-http-proxy-environment-variable/
 
-## Can't push code to a personal Github repo (Auth Error)?
+
+### Can't push code to a personal Github repo (Auth Error)?
 
 Support for password authentication was removed on August 13, 2021.
 
@@ -92,3 +97,12 @@ Once installed, run the following:
     gh auth setup-git
     
 Now you can push to a new repo, or push to a forked repo.
+
+
+## Attribution:
+
+This project makes use of Plotly
+https://plotly.com/python/
+
+It also includes a logo that utilizes the Oxygen Mono font, which is licensed
+under the Open Font License. 
