@@ -18,9 +18,13 @@ Download bootstrap css/js bundles and serve the files from the server.
 
 # Auth
 Allow for case insensitive logins
+
 If login credentials are incorrect, don't forget the "next" GET query
+
 Implement password change
+
 Implement user accounts, profile picture media
+
 Implement profiles
 
 Only allow internally-served JS to load.
@@ -33,8 +37,11 @@ Do more of the steps recommended in this article:
 https://opensource.com/article/18/1/10-tips-making-django-admin-more-secure
 
 Limit file size uploads
+
 Limit file extensions allowed to be uploaded
+
 Throttle login attempts
+
 Implement captcha for logins and registration
 
 For maximum security, make sure database servers only accept connections from your application servers.
@@ -50,13 +57,18 @@ Media files are uploaded by your users. They’re untrusted! Make sure your web 
 Make automatic backups for your media files.
 
 implement caching
+
 cache sessions
+
 tune the template cache
 
 set the following for your postgres user so that django doesn't set it for each request:
-client_encoding: 'UTF8'
-default_transaction_isolation: 'read committed'
-timezone: America/Detroit (does pg store in UTC regardless? and convert to user timezone?)
+
+* client_encoding: 'UTF8'
+
+* default_transaction_isolation: 'read committed'
+
+* timezone: America/Detroit (does pg store in UTC regardless? and convert to user timezone?)
 
 what's a pg session?
 
