@@ -9,6 +9,11 @@ more CRUD features, and various UI changes.
 
 <video width="630" height="300" src="https://github.com/1zzowiebeha/learning_log/assets/113861530/9ff64fe6-7dd7-4444-9383-af3c5b45d311"></video>
 
+# Upcoming features:
+
+View a list of upcoming features [here](https://github.com/1zzowiebeha/learning_log/blob/main/roadmap.md): 
+
+
 # Deploy to platform.sh:
 
 ### Create a virtual environment:
