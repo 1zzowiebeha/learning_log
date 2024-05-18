@@ -1,0 +1,22 @@
+{% extends 'learning_logs/base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block page_header %}
+    <h2>User Settings:</h2>
+{% endblock page_header %}
+
+{% block content %}
+    {# Error display is handled by bootstrap_form #}
+    
+    <p>Upload profile picture:</p>
+    <img class="rounded-circle" src="{{ MEDIA_URL }}{{ user.userprofile.profile_image.url }}"
+         width="250" height="250">
+    
+    <form class="mb-3" action="{% url 'profiles:upload_profile_image' %}"
+          method='post' enctype='multipart/form-data'>
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% bootstrap_button button_type="submit" content="Upload" %}
+    </form>
+{% endblock content %}

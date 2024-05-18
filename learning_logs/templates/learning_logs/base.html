@@ -45,11 +45,23 @@
                     <!-- Account-related links -->
                         <ul class="navbar-nav ms-auto mb-2 mb-md-0">
                             {% if user.is_authenticated %}
-                                <li class="nav-item mt-1 me-2">
+                                <li class="nav-item mt-1 me-1">
                                     <span class="navbar-text me-2">
-                                        Hello, {{ user.username }}.
+                                        Hello, {{ user.username }}
                                     </span>
                                 </li>
+                                
+                                <a href="{% url 'profiles:profile' user.userprofile.id %}">
+                                    <li class="nav-item mt-1 me-3">
+                                        <img class="rounded-circle border" src="{{ MEDIA_URL }}{{ user.userprofile.profile_image.url }}"
+                                        width="30" height="30">
+                                    </li>
+                                </a>
+                                
+                                <a href="{% url 'profiles:settings' %}"
+                                   class="btn btn-outline-primary me-1 btn-sm pb-1">
+                                    Settings
+                                </a>
                                 
                                 <li class="nav-item">
                                     <form action="{% url 'accounts:logout' %}" method='post'>

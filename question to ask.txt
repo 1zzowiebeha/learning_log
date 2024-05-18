@@ -1,0 +1,31 @@
+class UserProfile(models.Model):
+    user = models.ForeignKey(to=User,
+                             on_delete=models.CASCADE, 
+                             unique=True)
+    profile_image = models.ImageField(upload_to="profile_images")
+    bio_text = models.CharField(max_length=500, blank=True)
+    is_public = models.BooleanField(default=True)
+    friends = models.ManyToManyField(to=User,
+                                     related_name="profile_set",
+                                     blank=True,
+                                     null=True)
+    
+    class Meta:
+        ordering = ["user__username"]
+        
+    def __str__(self):
+        return f"{self.user.username}'s profile"
+
+
+
+I am new to Django, and I don't entirely understand the need for related_name here.
+If I omit it and try to makemigrations, it says that there is a reverse accesor error.
+I must Add or change a related_name argument to the definition for 'accounts.UserProfile.friends'
+or 'accounts.UserProfile.user'.
+
+Both related names point to the same model instance,
+	so why do I need two related query names?
+
+james = User.objects.get(username="james")
+profile = james.userprofile_set.first()
+same_profile = james.profile_set.first()

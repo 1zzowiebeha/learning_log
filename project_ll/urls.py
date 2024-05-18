@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
+from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
@@ -25,9 +26,10 @@ urlpatterns = [
     path('tz_detect/', include('tz_detect.urls')),
     
     # Custom apps:
+    path('profiles/', include('profiles.urls')),
     path('statistics/', include('stats.urls')),
     path('', include('learning_logs.urls')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.ENABLE_ADMIN_SITE_IN_PROD and not settings.DEBUG:
     # Production mode: Add route for admin site if enabled for production.

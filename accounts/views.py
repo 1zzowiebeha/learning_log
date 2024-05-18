@@ -11,6 +11,9 @@ from django.conf import settings
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
+from django.conf import settings
+
+from profiles.models import UserProfile
 
 def redirect_after_login(request: HttpRequest):
     """Redirects to the value defined in the "next" query."""
@@ -39,33 +42,47 @@ def login(request: HttpRequest):
     # TODO: Allow for case insensitive logins
     # TODO: If login credentials are incorrect, don't forget the
     #   "next" GET query.
+    # Turn into a CBV in order to get redirect authenticated user functionality.
     
     if request.user.is_authenticated:
         raise HttpResponseBadRequest("You are already logged in.")
-    else:
-        if request.method == "POST":
-            form = AuthenticationForm(request.POST)
-            if form.is_valid():
-                user = form.get_user()
-                auth_login(request, user)
 
-                redirect_after_login(request)
-        else:
-            form = AuthenticationForm()
+    if request.method == "POST":
+        form = AuthenticationForm(request.POST)
+        if form.is_valid():
+            user = form.get_user()
             
-        context = {
-            'form': form
-        }
+            try:
+                profile = user.userprofile
+            except AttributeError:
+                # User is legacy user. Give them a user profile.
+                new_profile = UserProfile.objects.create(user=user)
+            
+            auth_login(request, user)
+
+            return redirect(settings.LOGIN_REDIRECT_URL)
+            #redirect_after_login(request)
+    else:
+        form = AuthenticationForm()
         
-        return render(request, "accounts/login.html", context)
+    context = {
+        'form': form
+    }
+    
+    return render(request, "accounts/login.html", context)
 
 
 def register(request: HttpRequest):
     """Register a new user account."""
+    if request.user.is_authenticated:
+        raise HttpResponseBadRequest("You are already logged in.")
+
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
+            new_profile = UserProfile.objects.create(user=new_user)
+            
             auth_login(request, new_user)
 
             return redirect('learning_logs:index')

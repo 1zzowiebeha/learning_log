@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'learning_logs.apps.LearningLogsConfig',
     'stats.apps.StatsConfig',
     'accounts.apps.AccountsConfig',
+    'profiles.apps.ProfilesConfig',
 
     # Third-party apps
     'tz_detect',
