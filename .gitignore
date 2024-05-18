@@ -8,8 +8,8 @@ linux_ll_env/
 __pycache__/
 
 # ignore root level static folder descendants, but keep the folder
-/static/*
-
+/content/static/*
+/content/user_media/profile_images/*
 
 ###
 # MacOS auto-generated file
