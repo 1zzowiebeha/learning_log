@@ -12,6 +12,18 @@ __pycache__/
 /content/user_media/profile_images/*
 !/content/user_media/profile_images/default/*
 
+!content/
+content/*
+
+!content/static/
+content/static/*
+
+!content/profile_images/
+content/profile_images/*
+
+!content/profile_images/default/
+!content/profile_images/default/default_profile_image.jpg
+
 ###
 # MacOS auto-generated file
 .DS_Store
