@@ -51,7 +51,7 @@
                                     </span>
                                 </li>
                                 
-                                <a href="{% url 'profiles:profile' user.userprofile.id %}">
+                                <a href="{% url 'profiles:profile' user.userprofile.uuid %}">
                                     <li class="nav-item mt-1 me-3">
                                         <img class="rounded-circle border" src="{{ MEDIA_URL }}{{ user.userprofile.profile_image.url }}"
                                         width="30" height="30">

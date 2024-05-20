@@ -1,6 +1,6 @@
 from io import BytesIO
 import os
-from pathlib import PurePath
+import uuid
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -17,14 +17,8 @@ class OverwriteFileStorage(FileSystemStorage):
     def get_available_name(self, name, max_length=None):
         """File Storage that removes the old file
         so that we can make a new one (overwrite it)."""
-        # bug: diff file extensions are uploaded as diff files.
-        # remove based on file name, not filename + extension
-        # also, store user profiles with a UUID, and get urls and stuff
-        # based on the uuid
-        
-        # https://stackoverflow.com/questions/5722899/django-remove-currently-in-an-image-edit-form-and-replace-it-with-the-actual
+
         if self.exists(name):
-            #os.remove(os.path.join(settings.MEDIA_ROOT, name))
             self.delete(name)
 
         return name
@@ -40,6 +34,7 @@ class OverwriteFileStorage(FileSystemStorage):
             final_image_io = BytesIO()
             
             image_pixel_data = list(initial_image.getdata())
+            
             with (
                 Image.new(initial_image.mode, initial_image.size)
                 as image_without_exif
@@ -127,6 +122,8 @@ def process_image(image: models.ImageField, username: str) -> None:
 
 class UserProfile(models.Model):
     """A social profile for a user."""
+    uuid = models.UUIDField(default=uuid.uuid4,
+                            editable=False)
     user = models.OneToOneField(to=User,
                                 on_delete=models.CASCADE)
     profile_image = models.ImageField(

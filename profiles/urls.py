@@ -10,7 +10,7 @@ urlpatterns = [
     # .. to the "next" GET query param, or to LOGIN_REDIRECT_URL if "next"
     # .. isn't supplied.
     #   path('login/', LoginView.as_view(redirect_authenticated_user=True), name="login"),
-    path('<int:profile_id>/', views.profile, name="profile"),
+    path('<uuid:profile_uuid>/', views.profile, name="profile"),
     path('settings/', views.settings, name="settings"),
     path('settings/upload_profile_image/', views.upload_profile_image, name="upload_profile_image"),
 ]

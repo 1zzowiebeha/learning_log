@@ -51,9 +51,9 @@ def upload_profile_image(request: HttpRequest):
         #https://stackoverflow.com/questions/3648421/only-accept-a-certain-file-type-in-filefield-server-side
 
 @login_required
-def profile(request: HttpRequest, profile_id: int):
+def profile(request: HttpRequest, profile_uuid: str):
     """Display a userprofile."""
-    profile = get_object_or_404(UserProfile, id=profile_id)
+    profile = get_object_or_404(UserProfile, uuid=profile_uuid)
     
     context = {
         "profile": profile
