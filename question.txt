@@ -24,54 +24,18 @@ class OverwriteFileStorage(FileSystemStorage):
         
         # https://stackoverflow.com/questions/5722899/django-remove-currently-in-an-image-edit-form-and-replace-it-with-the-actual
         if self.exists(name):
-            #os.remove(os.path.join(settings.MEDIA_ROOT, name))
-            self.delete(name)
-
+            os.remove(os.path.join(settings.MEDIA_ROOT, name))
         return name
     
-    def save(self, name, content, max_length=None):
-        """Strip exif data from the file,
-        and convert the contents to PNG format.
-        
-        Then, pass it off to FileSystemStorage to do the
-        actual file system save."""
-        
-        with Image.open(content) as initial_image:
-            final_image_io = BytesIO()
-            
-            image_pixel_data = list(initial_image.getdata())
-            with (
-                Image.new(initial_image.mode, initial_image.size)
-                as image_without_exif
-            ):
-                image_without_exif.putdata(image_pixel_data)
-                
-                # Support RGBA for PNG conversion
-                if image_without_exif.mode != 'RGBA':
-                    image_without_exif = image_without_exif.convert('RGBA')
-                    
-                # Save new image to final_image_io BytesIO object
-                # PNG supports alpha, which is why we use it
-                image_without_exif.save(fp=final_image_io, format='PNG', quality=85)
-                
-                # Instantiate im_without_exif with the new image data
-                # and to let the context manager handle closing the file.
-                #with Image.open(final_image_io) as im_without_exif: 
-                new_file = File(final_image_io, name=name)
-                    
-                new_name = super().save(name=name, content=new_file, max_length=max_length)
-                    
-                # As a good practice, close the file handler after we are do.
-                image_without_exif.close()
-                    
-                return new_name
-
+    #def save(name, content, max_length=None):
+    #    """Convert the File contents to PNG format,
+    #    and strip exif data."""
+    #    new_name = 
     
-def create_name(instance, filename):
-    """Create a name for a profile picture ImageField,
-    where the path is /profile_images/,
-    and the filename is a User's username followed by the
-    .png extension."""
+def get_file_path(instance, filename):
+    """Get a file path where the filename is a User's username,
+    and give it the correct file extension."""
+    #ext = filename.split('.')[-1]
     username = instance.user.username
     filename = f"{username}.png"
     
@@ -130,7 +94,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(to=User,
                                 on_delete=models.CASCADE)
     profile_image = models.ImageField(
-        upload_to=create_name,
+        upload_to=get_file_path,
         default='profile_images/default_profile_image.jpg',
         storage=OverwriteFileStorage(),
     )
@@ -146,8 +110,21 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.username}'s profile"
     
-    #def save(self, *args, **kwargs):
-    #    if self.profile_image.name != 'profile_images/default_profile_image.jpg':
-    #        self.image = process_image(self.profile_image, self.user.username)
-    #
-    #    super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if self.profile_image.name != 'profile_images/default_profile_image.jpg':
+            self.image = process_image(self.profile_image, self.user.username)
+
+        super().save(*args, **kwargs)
+        
+        
+I have a settings view that allows a user to change their
+profile image. I want to convert the image they upload into
+PNG format, and strip the EXIF data before I display this image on the site.
+
+The problem is that the image doesn't save in the correct format.
+If I check the BytesIO format (open it as a Pillow image), it is PNG.
+But if I check the image in my media folder with a hex editor, it still
+shows the format it was uploaded with.
+I'm not sure what I need to do in order to fix it.
+
+Note: it is a little messy. I'll probably refactor this into the storage class.
