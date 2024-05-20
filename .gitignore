@@ -10,6 +10,7 @@ __pycache__/
 # ignore root level static folder descendants, but keep the folder
 /content/static/*
 /content/user_media/profile_images/*
+!/content/user_media/profile_images/default/*
 
 ###
 # MacOS auto-generated file
