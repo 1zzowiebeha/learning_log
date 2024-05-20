@@ -131,7 +131,7 @@ class UserProfile(models.Model):
                                 on_delete=models.CASCADE)
     profile_image = models.ImageField(
         upload_to=create_name,
-        default='profile_images/default_profile_image.jpg',
+        default='profile_images/default/default_profile_image.jpg',
         storage=OverwriteFileStorage(),
     )
     bio_text = models.CharField(max_length=500,
