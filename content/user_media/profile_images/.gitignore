@@ -1,0 +1,5 @@
+# Don't let users' profile images leak into repo
+*
+!default/
+!default/default_profile_image.jpg
+!.gitignore
