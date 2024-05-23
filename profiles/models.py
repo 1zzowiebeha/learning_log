@@ -37,7 +37,7 @@ class OverwriteFileStorage(FileSystemStorage):
         with Image.open(content) as initial_image:
             final_image_io = BytesIO()
             
-            # Create a singular image from the initial image, and put its data in the image.
+            # Create a blank image from the initial_image
             with (
                 Image.new(initial_image.mode, initial_image.size)
                 as image_without_exif
@@ -67,6 +67,8 @@ class OverwriteFileStorage(FileSystemStorage):
                             if image_without_exif.mode != 'RGBA':
                                 image_without_exif = image_without_exif.convert('RGBA')
                         
+                            # Save new image to final_image_io BytesIO object
+                            # PNG supports alpha, which is why we use it
                             image_without_exif.save(fp=final_image_io, format='PNG', quality=85)
                         except EOFError:
                             print("EOF occured. Check the code and spot the bug >:)")
@@ -78,20 +80,16 @@ class OverwriteFileStorage(FileSystemStorage):
                     if image_without_exif.mode != 'RGBA':
                         image_without_exif = image_without_exif.convert('RGBA')
                     
+                    
                     # Save new image to final_image_io BytesIO object
                     # PNG supports alpha, which is why we use it
                     image_without_exif.save(fp=final_image_io, format='PNG', quality=85)
                 
-                # Instantiate im_without_exif with the new image data
-                # and to let the context manager handle closing the file.
-                #with Image.open(final_image_io) as im_without_exif: 
-                new_file = File(final_image_io, name=name)
-                    
+                
+                new_file = File(final_image_io)
+                
                 new_name = super().save(name=name, content=new_file, max_length=max_length)
-                    
-                # As a good practice, close the file handler after we are do.
-                image_without_exif.close()
-                    
+                
                 return new_name
 
     
