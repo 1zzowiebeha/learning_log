@@ -27,27 +27,60 @@ class OverwriteFileStorage(FileSystemStorage):
         """Strip exif data from the file,
         and convert the contents to PNG format.
         
+        If a GIF is passed, extract the first frame,
+        strip the exif data, and convert the frame to PNG
+        format.
+        
         Then, pass it off to FileSystemStorage to do the
         actual file system save."""
         
         with Image.open(content) as initial_image:
             final_image_io = BytesIO()
             
-            image_pixel_data = list(initial_image.getdata())
-            
+            # Create a singular image from the initial image, and put its data in the image.
             with (
                 Image.new(initial_image.mode, initial_image.size)
                 as image_without_exif
-            ):
-                image_without_exif.putdata(image_pixel_data)
-                
-                # Support RGBA for PNG conversion
-                if image_without_exif.mode != 'RGBA':
-                    image_without_exif = image_without_exif.convert('RGBA')
+            ):   
+                if initial_image.format == "GIF":
+                        try:
+                            initial_image.seek(0)
+
+                            image_pixel_data = list(initial_image.getdata())
+                            first_frame_pixel_data = []
+                            
+                            # Store first frame of gif from its pixel data
+                            current_line = 0
+                            for index, pixel in enumerate(image_pixel_data):
+                                # We've reached the end of the line. Begin a new one.
+                                if index % initial_image.width == 0:
+                                    current_line += 1
+                                # We've reached the end of frame1.
+                                if current_line == initial_image.height:
+                                    break
+                                
+                                first_frame_pixel_data.append(image_pixel_data[index])
+                             
+                            image_without_exif.putdata(first_frame_pixel_data)
+                            
+                            # Use RGBA channels to support PNG conversion
+                            if image_without_exif.mode != 'RGBA':
+                                image_without_exif = image_without_exif.convert('RGBA')
+                        
+                            image_without_exif.save(fp=final_image_io, format='PNG', quality=85)
+                        except EOFError:
+                            print("EOF occured. Check the code and spot the bug >:)")
+                else:
+                    image_pixel_data = list(initial_image.getdata())
+                    image_without_exif.putdata(image_pixel_data)
                     
-                # Save new image to final_image_io BytesIO object
-                # PNG supports alpha, which is why we use it
-                image_without_exif.save(fp=final_image_io, format='PNG', quality=85)
+                    # Use RGBA channels to support PNG conversion
+                    if image_without_exif.mode != 'RGBA':
+                        image_without_exif = image_without_exif.convert('RGBA')
+                    
+                    # Save new image to final_image_io BytesIO object
+                    # PNG supports alpha, which is why we use it
+                    image_without_exif.save(fp=final_image_io, format='PNG', quality=85)
                 
                 # Instantiate im_without_exif with the new image data
                 # and to let the context manager handle closing the file.
