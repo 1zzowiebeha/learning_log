@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.validators import validate_image_file_extension
 
 from PIL import Image
+from PIL import ImageSequence
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
@@ -24,74 +25,74 @@ class OverwriteFileStorage(FileSystemStorage):
         return name
     
     def save(self, name, content, max_length=None):
-        """Strip exif data from the file,
-        and convert the contents to PNG format.
+        """If the file contents are not a sequence of
+        images, convert to PNG format.
         
-        If a GIF is passed, extract the first frame,
-        strip the exif data, and convert the frame to PNG
-        format.
+        If GIF contents are passed, extract the first frame,
+        and convert the frame to PNG format.
         
-        Then, pass it off to FileSystemStorage to do the
-        actual file system save."""
+        In both cases, EXIF data is not included in the final image.
         
+        After all of this, pass the converted file
+        off to FileSystemStorage to do the actual file system save."""
+    
         with Image.open(content) as initial_image:
             final_image_io = BytesIO()
-            
-            # Create a blank image from the initial_image
-            with (
-                Image.new(initial_image.mode, initial_image.size)
-                as image_without_exif
-            ):   
-                if initial_image.format == "GIF":
-                        try:
-                            initial_image.seek(0)
-
-                            image_pixel_data = list(initial_image.getdata())
-                            first_frame_pixel_data = []
-                            
-                            # Store first frame of gif from its pixel data
-                            current_line = 0
-                            for index, pixel in enumerate(image_pixel_data):
-                                # We've reached the end of the line. Begin a new one.
-                                if index % initial_image.width == 0:
-                                    current_line += 1
-                                # We've reached the end of frame1.
-                                if current_line == initial_image.height:
-                                    break
-                                
-                                first_frame_pixel_data.append(image_pixel_data[index])
-                             
-                            image_without_exif.putdata(first_frame_pixel_data)
-                            
-                            # Use RGBA channels to support PNG conversion
-                            if image_without_exif.mode != 'RGBA':
-                                image_without_exif = image_without_exif.convert('RGBA')
-                        
-                            # Save new image to final_image_io BytesIO object
-                            # PNG supports alpha, which is why we use it
-                            image_without_exif.save(fp=final_image_io, format='PNG', quality=85)
-                        except EOFError:
-                            print("EOF occured. Check the code and spot the bug >:)")
+        
+            if initial_image.format == "GIF":
+                    # A context manager closes the file pointer for us,
+                    #   and gives us clean code.
+                    with ImageSequence.Iterator(initial_image)[0] as frame1:
+                        frame1 = frame1.convert("RGBA")
+                        frame1.save(final_image_io, format="PNG", quality=85)
+            else:
+                converted_temp_image = None
+                
+                # Use RGBA channels to support PNG conversion
+                if initial_image.mode != 'RGBA':
+                    # convert() returns a pillow Image
+                    with initial_image.convert('RGBA') as converted_temp_image:
+                        converted_temp_image.save(final_image_io, format="PNG", quality=85)
                 else:
-                    image_pixel_data = list(initial_image.getdata())
-                    image_without_exif.putdata(image_pixel_data)
-                    
-                    # Use RGBA channels to support PNG conversion
-                    if image_without_exif.mode != 'RGBA':
-                        image_without_exif = image_without_exif.convert('RGBA')
-                    
-                    
-                    # Save new image to final_image_io BytesIO object
-                    # PNG supports alpha, which is why we use it
-                    image_without_exif.save(fp=final_image_io, format='PNG', quality=85)
+                    initial_image.save(final_image_io, format="PNG", quality=85)
+     
                 
-                
-                new_file = File(final_image_io)
-                
-                new_name = super().save(name=name, content=new_file, max_length=max_length)
-                
-                return new_name
+            
+            new_file = File(final_image_io)
+            
+            new_name = super().save(name=name, content=new_file, max_length=max_length)
+            
+            return new_name
 
+            # try:
+            #     initial_image.seek(4)
+
+            #     first_frame_pixel_data = []
+                
+            #     # Store first frame of gif from its pixel data
+            #     current_line = 0
+            #     for index, pixel in enumerate(image_pixel_data):
+            #         # We've reached the end of the line. Begin a new one.
+            #         if index % initial_image.width == 0:
+            #             current_line += 1
+            #         # We've reached the end of frame1.
+            #         if current_line == initial_image.height:
+            #             break
+                    
+            #         first_frame_pixel_data.append(image_pixel_data[index])
+                    
+            #     image_without_exif.putdata(first_frame_pixel_data)
+                
+            #     # Use RGBA channels to support PNG conversion
+            #     if image_without_exif.mode != 'RGBA':
+            #         image_without_exif = image_without_exif.convert('RGBA')
+            
+            #     # Save new image to final_image_io BytesIO object
+            #     # PNG supports alpha, which is why we use it
+            #     image_without_exif.save(fp=final_image_io, format='PNG', quality=85)
+            # except EOFError:
+            #     print("EOF occured. Check the code and spot the bug >:)")
+                        
     
 def create_name(instance, filename):
     """Create a name for a profile picture ImageField,
