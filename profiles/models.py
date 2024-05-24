@@ -14,7 +14,7 @@ from django.conf import settings
 
 PROFILE_IMAGE_FOLDER = "profile_images"
 
-class OverwriteFileStorage(FileSystemStorage):
+class ProfileImageFileStorage(FileSystemStorage):
     def get_available_name(self, name, max_length=None):
         """File Storage that removes the old file
         so that we can make a new one (overwrite it)."""
@@ -159,7 +159,7 @@ class UserProfile(models.Model):
     profile_image = models.ImageField(
         upload_to=create_name,
         default='profile_images/default/default_profile_image.jpg',
-        storage=OverwriteFileStorage(),
+        storage=ProfileImageFileStorage(),
     )
     bio_text = models.CharField(max_length=500,
                                 blank=True)
