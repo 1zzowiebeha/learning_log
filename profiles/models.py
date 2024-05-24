@@ -46,8 +46,6 @@ class OverwriteFileStorage(FileSystemStorage):
                         frame1 = frame1.convert("RGBA")
                         frame1.save(final_image_io, format="PNG", quality=85)
             else:
-                converted_temp_image = None
-                
                 # Use RGBA channels to support PNG conversion
                 if initial_image.mode != 'RGBA':
                     # convert() returns a pillow Image
