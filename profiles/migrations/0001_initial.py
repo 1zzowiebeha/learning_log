@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='UserProfile',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('profile_image', models.ImageField(default='profile_images/default_profile_image.jpg', storage=profiles.models.OverwriteFileStorage(), upload_to=profiles.models.create_name)),
+                ('profile_image', models.ImageField(default='profile_images/default_profile_image.jpg', storage=profiles.models.ProfileImageFileStorage(), upload_to=profiles.models.create_name)),
                 ('bio_text', models.CharField(blank=True, max_length=500)),
                 ('is_public', models.BooleanField(default=True)),
                 ('friends', models.ManyToManyField(blank=True, to='profiles.userprofile')),
