@@ -48,12 +48,16 @@ def login(request: HttpRequest):
         raise HttpResponseBadRequest("You are already logged in.")
 
     if request.method == "POST":
-        form = AuthenticationForm(request.POST)
+        form = AuthenticationForm(request, request.POST)
         if form.is_valid():
+            print("valid")
             user = form.get_user()
+            
+            print(user.username)
             
             try:
                 profile = user.userprofile
+                print(profile.profile_image)
             except AttributeError:
                 # User is legacy user. Give them a user profile.
                 new_profile = UserProfile.objects.create(user=user)
