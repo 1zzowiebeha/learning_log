@@ -7,14 +7,6 @@ linux_ll_env/
 
 __pycache__/
 
-<<<<<<< Updated upstream
-=======
-# ignore root level static folder descendants, but keep the folder
-/content/static/*
-/content/user_media/profile_images/*
-!/content/user_media/profile_images/default/*
-
->>>>>>> Stashed changes
 ###
 # MacOS auto-generated file
 .DS_Store

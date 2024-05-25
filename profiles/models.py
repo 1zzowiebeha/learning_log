@@ -36,18 +36,11 @@ class ProfileImageFileStorage(FileSystemStorage):
         If GIF contents are passed, extract the first frame,
         and convert the frame to PNG format.
         
-<<<<<<< Updated upstream
         In both cases, EXIF data is not included in the final image.
         
         After all of this, pass the converted file
         off to FileSystemStorage to do the actual file system save."""
     
-=======
-        # Todo: if the image uploaded is a GIF,
-        # store a frame from that GIF as a PNG instead of
-        # corrupting the image via PNG conversion.
-        
->>>>>>> Stashed changes
         with Image.open(content) as initial_image:
             final_image_io = BytesIO()
         
