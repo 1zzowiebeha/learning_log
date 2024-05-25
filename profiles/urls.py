@@ -11,8 +11,14 @@ urlpatterns = [
     # .. isn't supplied.
     #   path('login/', LoginView.as_view(redirect_authenticated_user=True), name="login"),
     path('<uuid:profile_uuid>/', views.profile, name="profile"),
-    path('<uuid:profile_uuid>/add_friend/', views.add_friend, name="add_friend"),
+    
     path('<uuid:profile_uuid>/friends/', views.view_friends, name="view_friends"),
+    path('request_friend/', views.request_friend, name="request_friend"),
+    path('remove_friend/', views.remove_friend, name="remove_friend"),
+    
+    path('pending_friends/', views.view_friend_requests, name="view_friend_requests"),
+    path('accept_friend/', views.accept_friend, name="accept_friend"),
+    path('decline_friend/', views.decline_friend, name="decline_friend"),
     
     path('settings/', views.settings, name="settings"),
     path('settings/update_profile_settings/', views.update_profile_settings, name="update_profile_settings"),

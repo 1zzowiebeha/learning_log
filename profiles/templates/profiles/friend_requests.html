@@ -1,0 +1,53 @@
+{% extends 'learning_logs/base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block page_header %}
+    <h2>Friend Requests:</h2>
+{% endblock page_header %}
+
+{% block content %}
+    <!-- display friends -->
+    <div class="container mx-auto text-center">
+    
+        {% for friend_request_profile in friend_requests %}
+            <div class="d-flex flex-row mx-auto justify-content-center align-items-center
+                        {% cycle 'border-bottom' '' %}">
+                    <a href="{% url 'profiles:profile' friend_request_profile.uuid %}"
+                        class="text-decoration-none
+                        d-flex flex-row mx-auto justify-content-center align-items-center
+                        pb-2">
+                        
+                        <img class="rounded-circle border" src="{{ MEDIA_URL }}{{ friend_request_profile.profile_image.url }}"
+                                width="50" height="50">
+                        <p class="ms-3 text-center">
+                            {{ friend_request_profile.user.username }}
+                        </p>
+                    </a>
+                    
+                        <form action="{% url 'profiles:accept_friend' %}"
+                            method="POST"
+                            class="me-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="friend_request_uuid" value="{{ friend_request_profile.uuid }}">
+                            <button class="btn btn-success" type="submit">
+                                Accept
+                            </button>
+                        </form>
+                        <form action="{% url 'profiles:decline_friend' %}"
+                        method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="friend_request_uuid" value="{{ friend_request_profile.uuid }}">
+                            <button class="btn btn-danger" type="submit">
+                                Decline
+                            </button>
+                        </form>
+                
+                {% empty %}
+                    <div class="d-flex flex-row justify-content-center align-items-center">
+                        <p>You currently have no friend requests.</p>
+                    </div>
+                {% endfor %}
+            </div>
+    </div>
+{% endblock content %}

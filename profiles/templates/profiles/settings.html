@@ -11,12 +11,18 @@
     
     <p>Upload profile picture:</p>
     <img class="rounded-circle" src="{{ MEDIA_URL }}{{ user.userprofile.profile_image.url }}"
-         width="250" height="250">
+    width="250" height="250">
     
     <form class="mb-3" action="{% url 'profiles:update_profile_settings' %}"
-          method='post' enctype='multipart/form-data'>
+    method='post' enctype='multipart/form-data'>
         {% csrf_token %}
         {% bootstrap_form form %}
         {% bootstrap_button button_type="submit" content="Save Settings" %}
     </form>
+    <p class="font-italic" style="font-size: x-small;">
+        <span class="text-danger">Note!</span>
+        It may take a small amount of time for your browser cache to update.
+        Keep refreshing the page.
+        To see your new profile picture even faster, clear your cookies.
+    </p>
 {% endblock content %}

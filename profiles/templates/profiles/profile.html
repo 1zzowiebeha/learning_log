@@ -17,24 +17,58 @@
             <img class="rounded-circle border" src="{{ MEDIA_URL }}{{ profile.profile_image.url }}"
                 width="200" height="200">
             <div class="col ms-3">
-                <div class="ms-2 mx-right">
-                    <form action="{% url 'profiles:add_friend' profile.uuid %}"
-                          method="POST">
-                        {% csrf_token %}
-                        <button class="btn btn-primary
-                                       {% if is_current_user_a_friend or profile.user == user %}
-                                            disabled
-                                       {% endif %}"
+                
+                {% if is_friend_request_pending %}
+                    <div class="ms-2 mx-right">
+                        <button class="btn btn-primary disabled"
                                 type="submit">
-                            Add friend
+                            Request pending
                         </button>
-                    </form>
-                </div>
+                    </div>
+                {% elif is_current_user_a_friend %}
+                    <div class="ms-2 mx-right">
+                        <form action="{% url 'profiles:remove_friend' %}"
+                            method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="profile_uuid" value="{{ profile.uuid }}">
+                            <button class="btn btn-primary"
+                                    type="submit">
+                                Remove friend
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="ms-2 mx-right">
+                        <form action="{% url 'profiles:request_friend' %}"
+                            method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="profile_uuid" value="{{ profile.uuid }}">
+                            <button class="btn btn-primary
+                                        {% if is_current_user_a_friend or profile.user == user %}
+                                                disabled
+                                        {% endif %}"
+                                    type="submit">
+                                Add friend
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+                
                 <p class="mt-2 ms-2">
                     <a href="{% url 'profiles:view_friends' profile.uuid %}">
-                        {{ profile.friends.count }} friend{% if profile.friends.count > 1 %}s{% endif %}
+                        {{ profile.friends.count }} friend{% if profile.friends.count > 1 or profile.friends.count == 0 %}s{% endif %}
                     </a>
                 </p>
+                {% if user.userprofile == profile %}
+                    <p class="ms-2">
+                        <a href="{% url 'profiles:view_friend_requests' %}">
+                            View friend requests
+                            {% if user.userprofile.pending_friends %}
+                                ({{ user.userprofile.pending_friends.count }})
+                            {% endif %}
+                        </a>
+                    </p>
+                {% endif %}
             </div>
         </div>
         
