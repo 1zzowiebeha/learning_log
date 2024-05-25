@@ -4,6 +4,15 @@ Fully implement custom relative date filter based off of humanize's implementati
 
 Implement topic-specific statistic pages
 
+Social features:
+  Change Add Friend button to Follow button
+  Change any occurence of "friend" with "follow"/"follower"
+  Add unfollow button
+  Add follower notifications via Signals
+  Paginate followers
+
+Add github data display
+
 # Performance/Security:
 Download plotly.js and serve the file from the server.
   
@@ -15,6 +24,7 @@ Download plotly.js and serve the file from the server.
     Probably the better approach.
 
 Download bootstrap css/js bundles and serve the files from the server.
+  This allows bootstrap to display if the local dev environment has no network connection.
 
 # Auth
 Allow for case insensitive logins

@@ -85,6 +85,10 @@ class UserProfile(models.Model):
                             editable=False)
     user = models.OneToOneField(to=User,
                                 on_delete=models.CASCADE)
+    # If profile_image doesn't update on the client's side,
+    #   the browser may be caching an old version.
+    # The user should clear their cookies until we find a better
+    #   solution.
     profile_image = models.ImageField(
         upload_to=create_name,
         default=DEFAULT_IMAGE_PATH,

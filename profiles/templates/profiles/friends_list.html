@@ -1,0 +1,48 @@
+{% extends 'learning_logs/base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block page_header %}
+    {% if profile.is_public or user == profile.user or is_current_user_a_friend %}
+        <h2>{{ profile.user.username }}'s friends:</h2>
+    {% else %}
+        <p>Profile hidden</p>
+    {% endif %}
+{% endblock page_header %}
+
+{% block content %}
+    {% if profile.is_public or user == profile.user or is_current_user_a_friend %}
+        <!-- display friends -->
+        <div class="container mx-auto text-center">
+            <div class="mb-3">
+                <p>
+                    <a href="{% url 'profiles:profile' profile.uuid %}"
+                       class="text-decoration-none">
+                        ⬅ Back to {{ profile.user.username }}'s profile
+                    </a>
+                </p>
+            </div>
+        
+            {% for friend_profile in friends_list %}
+                <a href="{% url 'profiles:profile' friend_profile.uuid %}"
+                    class="text-decoration-none
+                    d-flex flex-row mx-auto justify-content-center align-items-center
+                    {% cycle 'border-bottom' '' %} pb-2">
+                    
+                    <img class="rounded-circle border" src="{{ MEDIA_URL }}{{ friend_profile.profile_image.url }}"
+                            width="50" height="50">
+                    <p class="ms-3 text-center">
+                        {{ friend_profile.user.username }}
+                    </p>
+                </a>
+            {% empty %}
+                <div class="d-flex flex-row justify-content-center align-items-center">
+                    <p>This user has no friends.</p>
+                </div>
+            {% endfor %}
+        </div>
+        
+    {% else %}
+        <p>This is a private profile.</p>
+    {% endif %}
+{% endblock content %}

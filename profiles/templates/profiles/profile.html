@@ -3,12 +3,51 @@
 {% load django_bootstrap5 %}
 
 {% block page_header %}
-    <h2>{{ profile.user.username }}'s profile:</h2>
+    {% if profile.is_public or user == profile.user or is_current_user_a_friend %}
+        <h2>{{ profile.user.username }}</h2>
+    {% else %}
+        <p>Profile hidden</p>
+    {% endif %}
 {% endblock page_header %}
 
 {% block content %}
-    <img class="rounded-circle border" src="{{ MEDIA_URL }}{{ profile.profile_image.url }}"
-         width="200" height="200">
 
-    <p class="mt-3">Blurb, visible, friends, friend button, redo ui</p>
+    {% if profile.is_public or user == profile.user or is_current_user_a_friend %}
+        <div class="d-flex flex-row mb-3 justify-content-center align-items-center">
+            <img class="rounded-circle border" src="{{ MEDIA_URL }}{{ profile.profile_image.url }}"
+                width="200" height="200">
+            <div class="col ms-3">
+                <div class="ms-2 mx-right">
+                    <form action="{% url 'profiles:add_friend' profile.uuid %}"
+                          method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-primary
+                                       {% if is_current_user_a_friend or profile.user == user %}
+                                            disabled
+                                       {% endif %}"
+                                type="submit">
+                            Add friend
+                        </button>
+                    </form>
+                </div>
+                <p class="mt-2 ms-2">
+                    <a href="{% url 'profiles:view_friends' profile.uuid %}">
+                        {{ profile.friends.count }} friend{% if profile.friends.count > 1 %}s{% endif %}
+                    </a>
+                </p>
+            </div>
+        </div>
+        
+        <p>About me:</p>
+        <p class="border p-3">
+            {% if profile.bio_text %}
+                {{ profile.bio_text|linebreaksbr }}
+            {% else %}
+                This user hasn't written anything about themselves.
+            {% endif %}
+        </p>
+        
+    {% else %}
+        <p>This is a private profile.</p>
+    {% endif %}
 {% endblock content %}
