@@ -17,6 +17,7 @@ Including another URLconf
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
     # Auth:
@@ -28,7 +29,19 @@ urlpatterns = [
     # Custom apps:
     path('profiles/', include('profiles.urls')),
     path('statistics/', include('stats.urls')),
+    
+    # https://adamj.eu/tech/2020/02/10/robots-txt/
+    path('robots.txt', TemplateView.as_view(
+        template_name='project_ll/robots.txt',
+        content_type='text/plain')
+    ),
+    path('ai.txt', TemplateView.as_view(
+        template_name='project_ll/ai.txt',
+        content_type='text/plain')
+    ),
+    
     path('', include('learning_logs.urls')),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.ENABLE_ADMIN_SITE_IN_PROD and not settings.DEBUG:
