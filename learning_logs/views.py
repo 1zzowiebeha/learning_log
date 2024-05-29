@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Model
+from django.core.paginator import Paginator
 
 from stats.helperutils import max_hours_reached, get_total_hours, max_length
 
@@ -35,10 +36,25 @@ def index(request: HttpRequest):
 @login_required
 def topics(request: HttpRequest):
     """Show all topics."""
+    
     topics = Topic.objects.filter(owner=request.user) \
-                          .order_by("created_on")
+                          .order_by("modified_on")
+    paginator = Paginator(topics, 2)
+    
+    try:
+        page_value = int(request.GET["page"])
+    # first visit. no page requested
+    except KeyError:
+        page = paginator.page(1)
+    # user manipulated page value
+    except ValueError:
+        raise BadRequest
+    else:
+        page = paginator.page(page_value)
+        
     context = {
-        'topics': topics
+        'topics_page': page,
+        'topics_num_pages': paginator.num_pages,
     }
     
     return render(request, 'learning_logs/topics.html', context)

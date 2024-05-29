@@ -1,0 +1,53 @@
+{% load pagination_tags %}
+
+{% if page.number != 1 %}
+    <p>
+        {% if page.number <= 8 %}
+            {% for i in page.number|get_range %}
+                <a href="?page={{ i }}">
+                    {{ i }}
+                </a>
+                {% if i != page.number %}
+                    |
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            previous arrow
+        
+            <a href="?page=1">
+                1
+            </a>
+            |
+            <a href="?page=2">
+                2
+            </a>
+            
+            ...
+            
+            <!-- 3 up until last 2 pages (upper boundary is exclusive) -->
+            {% for i in page|get_range(3,page.number - 1) %}
+                <a href="?page={{ topics_page.previous_page_number }}">
+                    {{ topics_page.previous_page_number }}
+                </a>
+                |
+            {% endfor %}
+            
+            ...
+            
+            how to get a generic total_page_count if we 
+            have multiple paginators on a page?
+            
+            total_page_count
+            <a href="?page={{ topics_page.number - 1 }}">
+                {{ topics_page.number - 1 }}
+            </a>
+            |
+            total_page_count
+            <a href="?page={{ topics_page.number }}">
+                {{ topics_page.number }}
+            </a>
+            
+            forward arrow
+        {% endif %}
+    </p>
+{% endif %}

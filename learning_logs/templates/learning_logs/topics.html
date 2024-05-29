@@ -4,9 +4,11 @@
     <h1>📜 Topics:</h1>
 {% endblock page_header %}
 
+{% load pagination_tags %}
+
 {% block content %}
     <ul class="list-group border-bottom pb-2 mb-4">
-        {% for topic in topics %}
+        {% for topic in topics_page.object_list %}
             <li class="list-group-item border-0">
                 <p>
                     <a class="fs-4 text-decoration-none"
@@ -40,6 +42,8 @@
             </li>
         {% endfor %}
     </ul>
+    
+    {% include 'utility-templates/paginator.html' %}
 
     <p>
         <a class="btn btn-success"
