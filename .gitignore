@@ -4,6 +4,8 @@ ll_env/
 linux_ll_env/
 *.sqlite3
 .vscode/
+**/.vscode/
+ll_env/
 
 __pycache__/
 
