@@ -3,6 +3,7 @@
 from django.http import HttpRequest, HttpResponse, Http404
 from django.core.exceptions import BadRequest
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Model
@@ -28,18 +29,20 @@ def check_owner(user: User, model: Model,
         raise Http404
 
 
+@require_GET
 def index(request: HttpRequest):
     """The homepage for learning_logs."""
     return render(request, 'learning_logs/index.html')
 
 
 @login_required
+@require_GET
 def topics(request: HttpRequest):
     """Show all topics."""
     
     topics = Topic.objects.filter(owner=request.user) \
                           .order_by("modified_on")
-    paginator = Paginator(topics, 2)
+    paginator = Paginator(topics, 1)
     
     try:
         page_value = int(request.GET["page"])
@@ -52,9 +55,16 @@ def topics(request: HttpRequest):
     else:
         page = paginator.page(page_value)
         
+    print(page.object_list)
+              
+    # user manipulated page value
+    if page.number > paginator.num_pages:
+        raise BadRequest
+        
     context = {
-        'topics_page': page,
-        'topics_num_pages': paginator.num_pages,
+        'page': page,
+        'total_num_pages': paginator.num_pages,
+        'inner_page_min': max(3, page.number),
     }
     
     return render(request, 'learning_logs/topics.html', context)
@@ -63,6 +73,7 @@ def topics(request: HttpRequest):
 # TODO: class-based views might make these views more DRY (via inheritance),
 #   since we repeat the same context/queries for multiple views.
 @login_required
+@require_GET
 def topic(request: HttpRequest, topic_id: int):
     """Show a single topic and all its entries."""
     # Is it better to retrieve entries in the view, or the template?
@@ -87,6 +98,7 @@ def topic(request: HttpRequest, topic_id: int):
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def new_topic(request: HttpRequest) -> HttpResponse:
     """Add a new topic."""
     if request.method == "POST":
@@ -110,6 +122,7 @@ def new_topic(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def edit_topic(request: HttpRequest, topic_id: int) -> HttpResponse:
     """Edit the given topic."""
     topic = get_object_or_404(Topic, id=topic_id)
@@ -134,6 +147,7 @@ def edit_topic(request: HttpRequest, topic_id: int) -> HttpResponse:
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def delete_topic(request: HttpRequest, topic_id: int) -> HttpResponse:
     """Delete the given topic."""
     if request.method == "POST":
@@ -149,6 +163,7 @@ def delete_topic(request: HttpRequest, topic_id: int) -> HttpResponse:
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def new_entry(request: HttpRequest, topic_id: int) -> HttpResponse:
     """Add a new entry for a given topic."""
     topic = get_object_or_404(Topic, id=topic_id)
@@ -177,6 +192,7 @@ def new_entry(request: HttpRequest, topic_id: int) -> HttpResponse:
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def edit_entry(request: HttpRequest, entry_id: int) -> HttpRequest:
     """Edit page for the given entry."""
     entry = get_object_or_404(Entry, id=entry_id)
@@ -205,6 +221,7 @@ def edit_entry(request: HttpRequest, entry_id: int) -> HttpRequest:
 
 
 @login_required
+@require_POST
 def delete_entry(request: HttpRequest, entry_id: int) -> HttpRequest:
     """Delete the given entry."""
     entry = get_object_or_404(Entry, id=entry_id)
@@ -221,6 +238,7 @@ def delete_entry(request: HttpRequest, entry_id: int) -> HttpRequest:
 
 
 @login_required
+@require_http_methods(["GET", "POST"])
 def edit_hours(request: HttpRequest, datapoint_id: int) -> HttpRequest:
     """Edit the given hour datapoint."""
     # Note: Repetition should be improved with CBVs.
@@ -252,6 +270,7 @@ def edit_hours(request: HttpRequest, datapoint_id: int) -> HttpRequest:
     
     
 @login_required
+@require_http_methods(["GET", "POST"])
 def add_hours(request: HttpRequest, topic_id: int) -> HttpRequest:
     """Add a new datapoint for hours spent on a topic."""
     # Note: repetitive code is present here from the learning_logs:topic
